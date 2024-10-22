@@ -1,7 +1,9 @@
 #include <iostream>
 #include "nmod.h"
 #include "vec.h"
+
 using namespace std;
+
 int main()
 {
 
