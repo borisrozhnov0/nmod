@@ -17,44 +17,17 @@ public:
     {
        if(_ar) delete[] _ar;
     }
-
+    
+    void zero();
     void zero(size_t len);
-    void set(ulong ar[], size_t len)
-    {
-        if(_ar){ delete[] _ar; }
-        _ar = new ulong[len];
-        _len = len;
-        _ar = (ulong*)std::memcpy(_ar, ar, sizeof(ulong) * len);
-        setMod();
-    }
-
-    void zero()
-    {
-        for(size_t i = 0;  i != _len; i++){
-            _ar[i] = 0;
-        }
-    }
-    static inline Vec init(size_t len)
-    {
-        return Vec(new ulong[len], len);
-    }
-
-    static void swap(Vec & first, Vec & second)
-    {
-        size_t tmp = first._len;
-        ulong * pt = first._ar;
-        first._len = second._len;
-        first._ar  = second._ar;
-        second._len = tmp;
-        second._ar =  pt;
-    }
+    void set(ulong ar[], size_t len);
+    static inline Vec init(size_t len);
+    static void swap(Vec & first, Vec & second);
     void print();
+    
 protected:
-    void setMod()
-    {
-        for(size_t i = 0; i != _len; i++){ _ar[i] = nmod::Nmod<N>::init(_ar[i]); }
-    }
-    Vec(ulong ar[], size_t len):_ar(ar), _len(len){ }
+    void setMod();
+    Vec(ulong ar[], size_t len);
 private:
     ulong * _ar = nullptr;
     size_t _len = 0;
