@@ -49,12 +49,12 @@ namespace nmod
         return Vec(new ulong[len], len);
     }
 
-    template<size_t N> inline void nmod::Vec<N>::setMod()
+    template<size_t N> inline void Vec<N>::setMod()
     {
-        for(size_t i = 0; i != _len; i++){ _ar[i] = nmod::Nmod<N>::init(_ar[i]); }
+        for(size_t i = 0; i != _len; i++){ _ar[i] = Nmod<N>::init(_ar[i]); }
     }
 
-    template<size_t N> inline nmod::Vec<N>::Vec(nmod::ulong *ar, size_t len):_ar(ar), _len(len)
+    template<size_t N> Vec<N>::Vec(ulong *ar, size_t len):_ar(ar), _len(len)
     {
 
     }
