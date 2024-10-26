@@ -25,7 +25,7 @@ public:
     Poly<N>     &&operator=(Poly<N> && other); 
     inline ulong &operator[](size_t pos);
     inline ulong  operator[](size_t pos) const;
-    ulong         operator()(ulong x);
+    ulong         operator()(long x);
     
     static Poly<N> mul(const Poly<N> & p, ulong l);
     static Poly<N> mul(const Poly<N> & first, const Poly<N> & second);
