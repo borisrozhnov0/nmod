@@ -8,7 +8,7 @@ using ulong  = unsigned long;
 using slong  = signed long;
 using sllong = signed long long;
 
-template<size_t N> 
+template<ulong N> 
 class Nmod
 {
 public:
@@ -31,7 +31,7 @@ using ulong  = unsigned long;
 using slong  = signed long;
 using sllong = signed long long;
 
-template<size_t N> 
+template<size_t N>  //FIXME replace size_t to ulong
 class Nmod
 {
 public:
