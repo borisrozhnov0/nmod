@@ -24,6 +24,7 @@ inline size_t Poly<N>::size() const
 {
     return _size;
 }
+
 template<ulong N> 
 void Poly<N>::init(size_t size)
 {
@@ -60,7 +61,7 @@ void Poly<N>::set(size_t pos, ulong val)
         _val = pt;
     }
     _size = (pos + 1) > _size ? pos + 1 : _size;
-    _val[pos] = val;
+    _val[pos] = Nmod<N>::init(val);
 }
 
 template<ulong N> 
@@ -91,15 +92,15 @@ inline unsigned long Poly<N>::operator[](size_t pos) const
 
 
 template<ulong N> 
-unsigned long Poly<N>::operator()(ulong x)
+unsigned long Poly<N>::operator()(long x)
 {
     if(!_size) return 0;
     if(_size == 1) return _val[0];
     ulong mlt = 1ul;
     ulong ret = _val[0];
     for(size_t i = 1; i != _size; i++){
-        mlt *= x;
-        ret = _val[i] * mlt + ret;
+        mlt = Nmod<N>::mul(mlt, x);
+        ret = Nmod<N>::add(ret, Nmod<N>::mul(_val[i], mlt));
     }
     return ret;
 }
@@ -109,7 +110,7 @@ Poly<N> Poly<N>::mul(const Poly<N> &p, ulong l)
 {
     Poly<N> ret(p.size());
     ret._size = p.size();
-    for(size_t i = 0u; i != p.size(); i++){ ret[i] = p[i] * l; }
+    for(size_t i = 0u; i != p.size(); i++){ ret[i] = Nmod<N>::mul(p[i], l); }
     for(size_t i = p.size(); i < ret.size(); i++) {ret[i] = 0ul; }
     for(long i = p.size()-1; i != -1; i--){ if(ret[i]){ break; } else { ret._size--; } }
     return ret;
@@ -122,7 +123,9 @@ Poly<N> Poly<N>::mul(const Poly<N> &first, const Poly<N> &second)
     ret._size = first.size() + second.size() - 1;
     for(size_t i = 0; i < ret.size(); i++) { ret[i] = 0ul; }
     for(size_t i = 0u; i != first.size(); i++){ 
-        for(size_t j = 0u; j != second.size(); j++) { ret[i+j] += first[i] * second[j]; }
+        for(size_t j = 0u; j != second.size(); j++) { 
+            ret[i+j] = Nmod<N>::add(ret[i+j], Nmod<N>::mul(first[i], second[j])); 
+        }
     }
     for(long i = ret.size()-1; i != -1; i--){ 
         if(ret[i]){ break; } else { ret._size--; } 
@@ -135,7 +138,7 @@ Poly<N> Poly<N>::add(const Poly<N> &p, ulong l)
 {
     Poly<N> ret(p.size());
     ret._size = p.size();
-    for(size_t i = 0u; i != p.size(); i++){ ret[i] = p[i] + l; }
+    for(size_t i = 0u; i != p.size(); i++){ ret[i] = Nmod<N>::add(p[i], l); }
     for(size_t i = p.size(); i < ret.size(); i++) {ret[i] = 0ul; }
     for(long i = p.size()-1; i != -1; i--){ if(ret[i]){ break; } else { ret._size--; } }
     return ret;
@@ -158,7 +161,7 @@ Poly<N> Poly<N>::add(const Poly<N> &first, const Poly<N> &second)
     }
     Poly<N> ret(max);
     ret._size = max;    
-    for(size_t i = 0u; i != min; i++) { ret[i] = first[i] + second[i]; }
+    for(size_t i = 0u; i != min; i++) { ret[i] = Nmod<N>::add(first[i], second[i]); }
     for(size_t i = min; i != max; i++){ ret[i] = pt[i]; }
     for(long i = ret.size()-1; i != -1; i--){ 
         if(ret[i]){ break; } else { ret._size--; } 
@@ -171,8 +174,8 @@ Poly<N> Poly<N>::sub(const Poly<N> &p, ulong l)
 {
     Poly<N> ret(p.size());
     ret._size = p.size();
-    for(size_t i = 0u; i != p.size(); i++){ ret[i] = p[i] - l; }
-    for(size_t i = p.size(); i < ret.size(); i++) {ret[i] = 0ul; }
+    for(size_t i = 0u; i != p.size(); i++){ ret[i] = Nmod<N>::sub(p[i], l); }
+    for(size_t i = p.size(); i < ret.size(); i++) { ret[i] = 0ul; }
     for(long i = p.size()-1; i != -1; i--){ if(ret[i]){ break; } else { ret._size--; } }
     return ret;
 }
@@ -194,12 +197,12 @@ Poly<N> Poly<N>::sub(const Poly<N> &first, const Poly<N> &second)
     }
     Poly<N> ret(max);
     ret._size = max;    
-    for(size_t i = 0u; i != min; i++) { ret[i] = first[i] -  second[i]; }
+    for(size_t i = 0u; i != min; i++) { ret[i] = Nmod<N>::sub(first[i], second[i]); }
     if(pt == first.data()){
         for(size_t i = min; i != max; i++){ ret[i] = pt[i]; }
     }
     else{
-        for(size_t i = min; i != max; i++){ ret[i] = 0 - pt[i]; }
+        for(size_t i = min; i != max; i++){ ret[i] = Nmod<N>::sub(0, second[i]); }
     }
     for(long i = ret.size()-1; i != -1; i--){ 
         if(ret[i]){ break; } else { ret._size--; } 
