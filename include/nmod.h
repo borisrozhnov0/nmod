@@ -9,17 +9,76 @@ using slong  = signed long;
 using sllong = signed long long;
 
 template<ulong N> 
-class Nmod
-{
+class Nmod                                                                      //FIXME sllong value
+{                                                                               //STYLE add desc. to nmod.cc
 public:
-    static inline ulong init(nmod::slong value);
+    Nmod()=default;
+    Nmod(slong val):_val(init(val)){ };
+    ~Nmod()=default;
+
+    Nmod &operator+=(Nmod other)
+    {  
+        _val = (ulong)(((sllong)this->_val + other._val) % N);
+        return *this;
+    }
+    Nmod &operator-=(Nmod other)
+    {  
+        _val = (ulong)(((sllong)this->_val - (sllong)other._val) % (sllong)N 
+             + (this->_val < other._val ? N : 0));
+        return *this;
+    }
+    Nmod &operator*=(Nmod other)
+    {  
+        _val = (ulong)(((sllong)_val * other._val) % N);
+        return *this;
+    }
+    Nmod &operator/=(Nmod other)
+    {  
+        _val = (ulong)(((sllong)_val * inv(other._val)) % N);
+        return *this;
+    }
+
+    Nmod operator+(Nmod other)
+    {  
+        Nmod ret;
+        ret._val = (ulong)(((sllong)this->_val + other._val) % N);
+        return ret;
+    }
+    Nmod operator-(Nmod other)
+    {  
+        Nmod ret;
+        ret._val = (ulong)(((sllong)this->_val - (sllong)other._val) % (sllong)N 
+                 + (this->_val < other._val ? N : 0));
+        return ret;
+    }
+    Nmod operator*(Nmod other)
+    {  
+        Nmod ret;
+        ret._val = (ulong)(((sllong)this->_val * other._val) % N);
+        return ret;
+    }
+    Nmod operator/(Nmod other)
+    {  
+        Nmod ret;
+        ret._val = (ulong)(((sllong)this->_val * inv(other._val)) % N);
+        return ret;
+    }
+
+    static inline ulong init(slong value);
     static inline ulong add(slong first, slong second);
     static inline ulong sub(slong first, slong second);
     static inline ulong mul(slong first, slong second);
     static inline ulong div(slong first, slong second);
     static inline ulong pow(slong value, ulong exp);
     static inline ulong inv(nmod::slong val);
-    static inline bool divides(slong first, slong res, slong second);
+    static inline bool  divides(slong first, slong res, slong second);
+private:
+    ulong _val;
+
+    friend std::ostream &operator<<(std::ostream & os, Nmod n)
+    { 
+        return os<<n._val;
+    }
 };
 } // namespace nmod
 #include "../source/nmod/nmod.cc.inc"
